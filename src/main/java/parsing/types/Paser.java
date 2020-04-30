@@ -1,49 +1,62 @@
 package parsing.types;
 
+import java.util.Arrays;
+
 public class Paser {
 
-    public ComplexSentence cs = new ComplexSentence();
+    public ComplexSentence complexSentence = new ComplexSentence();
 
     public ComplexSentence parseString(String input) {
+
+        // (a or b) and (b or c)
+
+        //
+
         if(isAtomic(input)){
             Literal lit = new Literal(isNegated(input), input.replace("not", ""));
-            //Literal[] litArray = new Literal[1];
-            //litArray[0] = lit;
+            Literal[] lits = new Literal[1];
+            lits[0] = lit;
+            Sentence sentence = new Sentence();
+            sentence.setLiterals(lits);
 
-            return cs;
+            Sentence[] sentences = new Sentence[1];
+            sentences[0] = sentence;
+
+            complexSentence.setSimplerSentences(sentences);
+
         }
         else if(isSimpleSentence(input)){
             //example, a and b
+
             int firstAnd = input.indexOf("and");
             int firstOr = input.indexOf("or");
 
-            if(firstAnd < firstOr || (firstAnd != -1 && firstOr == -1)) {
-                String proposition1 = input.substring(0, firstAnd);
-                proposition1 = proposition1.replace(" ", "");
-                String proposition2 = input.substring(firstAnd + 3);
-                proposition2 = proposition2.replace(" ", "");
-                System.out.println("proposition 1: " + proposition1 + " and proposition 2: " + proposition2);
+            if(firstAnd != -1 && firstOr == -1) {
+                String[] substrings = input.split("and");
 
-                Literal[] lits = new Literal[2];
-
-                lits[0] = new Literal(isNegated(proposition1), proposition1);
-                lits[1] = new Literal(isNegated(proposition2), proposition2);
-
-                Sentence s = new Sentence();
-
-                s.setLiterals(lits);
-                s.setConnective(Connective.AND);
-
+                for (String str : substrings) {
+                    parseString(str);
+                }
             }
-            else if (firstOr < firstAnd) {
-                String substr = input.substring(0, firstOr);
+
+            else if (firstAnd == -1 && firstOr != -1) {
+                String[] substrings = input.split("or");
+
+                for (String str : substrings) {
+                    parseString(str);
+                }
             }
-            System.out.println("Sentence contains 'and' and 'or' at indexes: " + firstAnd + ", " + firstOr);
-            return cs;
+
         }
-        else {
-            return cs;
+        else { //(a or b) and (not b or c) and ... and ...
+            String[] substrings = input.split("and");
+
+            for (String str : substrings) {
+                return parseString(str);
+            }
         }
+
+        return complexSentence;
     }
 
     private boolean isSimpleSentence(String input){

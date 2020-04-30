@@ -1,5 +1,7 @@
 package parsing.types;
 
+import java.util.Arrays;
+
 public class ComplexSentence {
 
     public Connective getConnective() {
@@ -20,4 +22,12 @@ public class ComplexSentence {
 
     private Connective connective;
     private Sentence[] simplerSentences;
+
+    @Override
+    public String toString() {
+        return "ComplexSentence{" +
+                "connective=" + connective +
+                ", simplerSentences=" + Arrays.toString(simplerSentences) +
+                '}';
+    }
 }

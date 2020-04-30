@@ -1,7 +1,11 @@
 package main;
 
 import java.util.Scanner;
+
+import parsing.types.ComplexSentence;
+import parsing.types.Literal;
 import parsing.types.Paser;
+import parsing.types.Sentence;
 
 public class main {
 
@@ -15,9 +19,15 @@ public class main {
 
         Paser p = new Paser();
 
-        p.parseString(proposition);
+        ComplexSentence result = p.parseString(proposition);
 
+        System.out.println(result.toString());
 
+        for (Sentence s : result.getSimplerSentences()) {
+            for (Literal l : s.getLiterals()) {
+
+            }
+        }
 
     }
 
