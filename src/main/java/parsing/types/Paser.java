@@ -23,6 +23,11 @@ public class Paser {
 
     }
 
+    private Literal[] parseLit (Literal[] array, string input){
+
+
+    }
+
     private boolean isSimpleSentence(String input){
         int sum = 0;
         sum = sum + numberOfConnectives(input, "and");
