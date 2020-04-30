@@ -1,6 +1,7 @@
 package parsing.types;
 
 public class ComplexSentence {
+
     public Connective getConnective() {
         return connective;
     }
