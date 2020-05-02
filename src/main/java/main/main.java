@@ -2,6 +2,7 @@ package main;
 
 import java.util.Scanner;
 
+import kb.KnowledgeBase;
 import parsing.types.*;
 
 public class main {
@@ -14,11 +15,18 @@ public class main {
         String proposition = "(not a or b) and (b or c)"; //  = myObj.nextLine();  // Read user input
         System.out.println("Proposition is : " + proposition);  // Output user input
 
-        Paser p = new Paser();
+        Parser p = new Parser();
 
-        Node result = p.parseString(proposition);
+        // Node result = p.parseString(proposition);
 
-        System.out.println(treeToString(result));
+        KnowledgeBase kb = new KnowledgeBase();
+
+        kb.tell(proposition);
+
+        System.out.println(kb.getSentences());
+        System.out.println(kb.getSymbols());
+
+       // System.out.println(treeToString(result));
         // System.out.println(result.toString());
 
 

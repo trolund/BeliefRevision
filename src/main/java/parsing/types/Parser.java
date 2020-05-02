@@ -2,18 +2,20 @@ package parsing.types;
 
 import java.util.Arrays;
 
-public class Paser {
+public class Parser {
 
     public ComplexSentence complexSentence = new ComplexSentence();
 
+    private String beautify(String str) {
+       return str.replace("not", "")
+                .replace("(", "")
+                .replace(")","")
+                .replace(" ","");
+    }
+
     public Node parseString(String input) {
-
-        // (a or b) and (b or c)
-
-        //
-
         if(isAtomic(input)){
-            Literal lit = new Literal(isNegated(input), input.replace("not", ""));
+            Literal lit = new Literal(isNegated(input), beautify(input));
             return new Node<Literal>(lit);
         }
         else if(isSimpleSentence(input)){
@@ -21,24 +23,6 @@ public class Paser {
 
             int firstAnd = input.indexOf("and");
             int firstOr = input.indexOf("or");
-
-            /*
-            if(firstAnd != -1 && firstOr == -1) {
-                String[] substrings = input.split("and");
-
-                for (String str : substrings) {
-                    parseString(str);
-                }
-            }
-
-            else if (firstAnd == -1 && firstOr != -1) {
-                String[] substrings = input.split("or");
-
-                for (String str : substrings) {
-                    parseString(str);
-                }
-            }
-            */
 
             String[] substrings = firstAnd != -1 ? input.split("and") : input.split("or");
 
