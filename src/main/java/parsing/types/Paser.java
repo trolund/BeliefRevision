@@ -6,7 +6,7 @@ public class Paser {
 
     public ComplexSentence complexSentence = new ComplexSentence();
 
-    public ComplexSentence parseString(String input) {
+    public Node parseString(String input) {
 
         // (a or b) and (b or c)
 
@@ -14,16 +14,7 @@ public class Paser {
 
         if(isAtomic(input)){
             Literal lit = new Literal(isNegated(input), input.replace("not", ""));
-            Literal[] lits = new Literal[1];
-            lits[0] = lit;
-            Sentence sentence = new Sentence();
-            sentence.setLiterals(lits);
-
-            Sentence[] sentences = new Sentence[1];
-            sentences[0] = sentence;
-
-            complexSentence.setSimplerSentences(sentences);
-
+            return new Node<Literal>(lit);
         }
         else if(isSimpleSentence(input)){
             //example, a and b
@@ -31,6 +22,7 @@ public class Paser {
             int firstAnd = input.indexOf("and");
             int firstOr = input.indexOf("or");
 
+            /*
             if(firstAnd != -1 && firstOr == -1) {
                 String[] substrings = input.split("and");
 
@@ -46,17 +38,26 @@ public class Paser {
                     parseString(str);
                 }
             }
+            */
 
+            String[] substrings = firstAnd != -1 ? input.split("and") : input.split("or");
+
+            Node newNode = new Node<Connective>(firstAnd != -1 ? Connective.AND : Connective.OR);
+            newNode.addChild(parseString(substrings[0]));
+            newNode.addChild(parseString(substrings[1]));
+
+            return newNode;
         }
         else { //(a or b) and (not b or c) and ... and ...
             String[] substrings = input.split("and");
 
-            for (String str : substrings) {
-                return parseString(str);
-            }
-        }
+            Node root = new Node<Connective>(Connective.AND);
 
-        return complexSentence;
+            for (String str : substrings) {
+                root.addChild(parseString(str));
+            }
+            return root;
+        }
     }
 
     private boolean isSimpleSentence(String input){

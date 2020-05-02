@@ -4,6 +4,9 @@ import java.util.Arrays;
 
 public class Sentence {
 
+    private Connective connective;
+    private Literal[] literals;
+
     public Connective getConnective() {
         return connective;
     }
@@ -30,9 +33,6 @@ public class Sentence {
         return str.toString();
     }
 
-    private Connective connective;
-    private Literal[] literals;
-
     @Override
     public String toString() {
         return "Sentence{" +
@@ -40,4 +40,5 @@ public class Sentence {
                 ", literals=" + Arrays.toString(literals) +
                 '}';
     }
+
 }

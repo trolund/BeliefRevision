@@ -2,7 +2,7 @@ package parsing.types;
 
 import java.util.Arrays;
 
-public class ComplexSentence {
+public class ComplexSentence extends Sentence implements Iexp<Sentence[]>{
 
     public Connective getConnective() {
         return connective;
@@ -30,4 +30,13 @@ public class ComplexSentence {
                 ", simplerSentences=" + Arrays.toString(simplerSentences) +
                 '}';
     }
+
+    public Sentence[] getExp() {
+        return simplerSentences;
+    }
+
+    public void setExp(Sentence[] exp) {
+        this.simplerSentences = exp;
+    }
+
 }
