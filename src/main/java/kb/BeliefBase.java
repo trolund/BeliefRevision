@@ -11,16 +11,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class KnowledgeBase {
-
+public class BeliefBase {
 
     private List<Node<Connective>> sentences = new ArrayList<>();
     private List<Character> symbols = new ArrayList<>();
+    private List<Literal> literals = new ArrayList<>();
     private Parser parser = new Parser();
 
     public void tell(String aSentence) {
         tell((Node) parser.parseString(aSentence));
-
     }
 
     private void tell(Node node) {
@@ -28,6 +27,7 @@ public class KnowledgeBase {
             sentences.add(node);
             List<Character> symbolesList = getAllSymbols(node);
             symbols.addAll(symbolesList);
+            addLiterals(node);
         }
     }
 
@@ -50,6 +50,17 @@ public class KnowledgeBase {
         }
     }
 
+    private void addLiterals(Node node) {
+        if(node.getChildren().size() == 0) {
+            literals.add(((Literal) node.getData()));
+        }
+        else {
+            for (Object childNode : node.getChildren()) {
+                addLiterals((Node) childNode);
+            }
+        }
+    }
+
     public List<Node<Connective>> getSentences() {
         return sentences;
     }
@@ -58,5 +69,9 @@ public class KnowledgeBase {
 
     public List<Character> getSymbols() {
         return symbols;
+    }
+
+    public List<Literal> getLiterals() {
+        return literals;
     }
 }

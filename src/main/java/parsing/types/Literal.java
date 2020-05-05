@@ -18,6 +18,10 @@ public class Literal implements Iexp<String> {
         return literal;
     }
 
+    public void setLiteral(Boolean b) {
+        this.isNot = b;
+    }
+
     public void setExp(String exp) {
         this.literal = exp;
     }

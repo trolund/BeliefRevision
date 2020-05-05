@@ -2,7 +2,7 @@ package main;
 
 import java.util.Scanner;
 
-import kb.KnowledgeBase;
+import kb.BeliefBase;
 import parsing.types.*;
 
 public class main {
@@ -19,7 +19,7 @@ public class main {
 
         // Node result = p.parseString(proposition);
 
-        KnowledgeBase kb = new KnowledgeBase();
+        BeliefBase kb = new BeliefBase();
 
         kb.tell(proposition);
 

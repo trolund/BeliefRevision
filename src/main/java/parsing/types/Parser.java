@@ -44,6 +44,19 @@ public class Parser {
         }
     }
 
+    public Node negateNode(Node node) {
+        if(node.getChildren().size() == 0) {
+            ((Literal) node.getData()).setLiteral(!((Literal) node.getData()).isNot);
+        }
+        else {
+            for (Object childnode : node.getChildren()) {
+                negateNode((Node) childnode);
+            }
+        }
+
+        return node;
+    }
+
     private boolean isSimpleSentence(String input){
         int sum = 0;
         sum = sum + numberOfConnectives(input, "and");
