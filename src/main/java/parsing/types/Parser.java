@@ -1,24 +1,51 @@
 package parsing.types;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class Parser {
 
-    public ComplexSentence complexSentence = new ComplexSentence();
-
     private String beautify(String str) {
-       return str.replace("not", "")
+        return str.replace("not", "")
                 .replace("(", "")
-                .replace(")","")
-                .replace(" ","");
+                .replace(")", "")
+                .replace(" ", "");
     }
 
+    public Set<Clause> parseNode(Node input) {
+        if (input.getData() instanceof Connective) {
+            if ((input.getData().equals(Connective.OR))) {
+                Clause tempClause = new Clause();
+
+                LinkedHashSet<Literal> tempLits = new LinkedHashSet<Literal>();
+
+                for (Object n : input.getChildren()) {
+                    Node tempNode = (Node) n;
+                    tempLits.add((Literal) tempNode.getData());
+                }
+                tempClause.setLiterals(tempLits);
+
+                HashSet<Clause> tempClauses = new HashSet<Clause>();
+                tempClauses.add(tempClause);
+                return tempClauses;
+
+            } else {
+                HashSet<Clause> tempClauses = new HashSet<Clause>();
+                for (Object n : input.getChildren()) {
+
+                    Set<Clause> results = parseNode((Node) n);
+                    tempClauses.addAll(results);
+                }
+                return tempClauses;
+            }
+        }
+    }
+
+
     public Node parseString(String input) {
-        if(isAtomic(input)){
+        if (isAtomic(input)) {
             Literal lit = new Literal(isNegated(input), beautify(input));
             return new Node<Literal>(lit);
-        }
-        else if(isSimpleSentence(input)){
+        } else if (isSimpleSentence(input)) {
             //example, a and b
 
             int firstAnd = input.indexOf("and");
@@ -31,8 +58,7 @@ public class Parser {
             newNode.addChild(parseString(substrings[1]));
 
             return newNode;
-        }
-        else { //(a or b) and (not b or c) and ... and ...
+        } else { //(a or b) and (not b or c) and ... and ...
             String[] substrings = input.split("and");
 
             Node root = new Node<Connective>(Connective.AND);
@@ -45,10 +71,9 @@ public class Parser {
     }
 
     public Node negateNode(Node node) {
-        if(node.getChildren().size() == 0) {
+        if (node.getChildren().size() == 0) {
             ((Literal) node.getData()).setLiteral(!((Literal) node.getData()).isNot);
-        }
-        else {
+        } else {
             for (Object childnode : node.getChildren()) {
                 negateNode((Node) childnode);
             }
@@ -57,14 +82,14 @@ public class Parser {
         return node;
     }
 
-    private boolean isSimpleSentence(String input){
+    private boolean isSimpleSentence(String input) {
         int sum = 0;
         sum = sum + numberOfConnectives(input, "and");
         sum = sum + numberOfConnectives(input, "or");
         return sum == 1;
     }
 
-    private int numberOfConnectives(String input, String connective){
+    private int numberOfConnectives(String input, String connective) {
         int index = input.indexOf(connective);
         int count = 0;
         while (index != -1) {
@@ -79,7 +104,7 @@ public class Parser {
         return !(input.contains("and") || input.contains("or"));
     }
 
-    private boolean isNegated(String input){
+    private boolean isNegated(String input) {
         return input.contains("not");
     }
 

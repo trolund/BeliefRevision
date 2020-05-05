@@ -1,9 +1,6 @@
 package kb;
 
-import parsing.types.Connective;
-import parsing.types.Literal;
-import parsing.types.Node;
-import parsing.types.Parser;
+import parsing.types.*;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -13,10 +10,8 @@ import java.util.function.Predicate;
 
 public class BeliefBase {
 
-    private List<Node<Connective>> sentences = new ArrayList<>();
-    private List<Character> symbols = new ArrayList<>();
-    private List<Literal> literals = new ArrayList<>();
     private Parser parser = new Parser();
+    private LinkedHashSet<Clause> clauses = new LinkedHashSet<Clause>();
 
     public void tell(String aSentence) {
         tell((Node) parser.parseString(aSentence));
@@ -32,12 +27,12 @@ public class BeliefBase {
     }
 
     private List<Character> getAllSymbols(Node node) {
-        if(node.getChildren().size() == 0){
+        if (node.getChildren().size() == 0) {
             char c = ((Literal) node.getData()).literal.charAt(0);
             List<Character> shortList = new ArrayList<>();
             shortList.add(c);
             return shortList;
-        }else {
+        } else {
             List<Character> longList = new ArrayList<>();
 
             for (Object childNode : node.getChildren()) {
@@ -51,10 +46,9 @@ public class BeliefBase {
     }
 
     private void addLiterals(Node node) {
-        if(node.getChildren().size() == 0) {
+        if (node.getChildren().size() == 0) {
             literals.add(((Literal) node.getData()));
-        }
-        else {
+        } else {
             for (Object childNode : node.getChildren()) {
                 addLiterals((Node) childNode);
             }
@@ -64,7 +58,6 @@ public class BeliefBase {
     public List<Node<Connective>> getSentences() {
         return sentences;
     }
-
 
 
     public List<Character> getSymbols() {
