@@ -12,25 +12,22 @@ public class main {
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
         System.out.println("Enter propositions");
 
-        String proposition = "(not a or b) and (b or c)"; //  = myObj.nextLine();  // Read user input
+        String proposition = "(not a or b or d) and (b or c)"; //  = myObj.nextLine();  // Read user input
         System.out.println("Proposition is : " + proposition);  // Output user input
 
         Parser p = new Parser();
 
-        // Node result = p.parseString(proposition);
+        BeliefBase bb = new BeliefBase();
 
-        BeliefBase kb = new BeliefBase();
+        bb.tell(proposition);
 
-        kb.tell(proposition);
+        p.entailment(bb, "not d"); //(not a or b) and (b or c) and (not d) --> return true
 
-        System.out.println(kb.getSentences());
-        System.out.println(kb.getSymbols());
+        //System.out.println(kb.getClauses());
 
-       // System.out.println(treeToString(result));
-        // System.out.println(result.toString());
-
-
-
+        for (Clause c : bb.getClauses()) {
+            System.out.println(c.toString());
+        }
     }
 
     public static String treeToString(Node root)

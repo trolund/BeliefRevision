@@ -1,29 +1,20 @@
 package kb;
 
 import parsing.types.*;
-
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class BeliefBase {
 
     private Parser parser = new Parser();
-    private LinkedHashSet<Clause> clauses = new LinkedHashSet<Clause>();
+    private HashSet<Clause> clauses = new HashSet<Clause>();
 
     public void tell(String aSentence) {
-        tell((Node) parser.parseString(aSentence));
+        Node result = parser.parseString(aSentence);
+        tell(parser.parseNode(result));
     }
 
-    private void tell(Node node) {
-        if (!(sentences.contains(node))) {
-            sentences.add(node);
-            List<Character> symbolesList = getAllSymbols(node);
-            symbols.addAll(symbolesList);
-            addLiterals(node);
-        }
+    private void tell(HashSet<Clause> set) {
+        clauses.addAll(set);
     }
 
     private List<Character> getAllSymbols(Node node) {
@@ -45,26 +36,7 @@ public class BeliefBase {
         }
     }
 
-    private void addLiterals(Node node) {
-        if (node.getChildren().size() == 0) {
-            literals.add(((Literal) node.getData()));
-        } else {
-            for (Object childNode : node.getChildren()) {
-                addLiterals((Node) childNode);
-            }
-        }
-    }
-
-    public List<Node<Connective>> getSentences() {
-        return sentences;
-    }
-
-
-    public List<Character> getSymbols() {
-        return symbols;
-    }
-
-    public List<Literal> getLiterals() {
-        return literals;
+    public HashSet<Clause> getClauses() {
+        return clauses;
     }
 }

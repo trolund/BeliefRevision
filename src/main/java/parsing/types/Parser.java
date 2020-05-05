@@ -1,5 +1,7 @@
 package parsing.types;
 
+import kb.BeliefBase;
+
 import java.util.*;
 
 public class Parser {
@@ -11,35 +13,32 @@ public class Parser {
                 .replace(" ", "");
     }
 
-    public Set<Clause> parseNode(Node input) {
-        if (input.getData() instanceof Connective) {
-            if ((input.getData().equals(Connective.OR))) {
-                Clause tempClause = new Clause();
+    public HashSet<Clause> parseNode(Node input) {
+        if(input.getData().equals(Connective.AND)) {
+            HashSet<Clause> tempClauses = new HashSet<Clause>();
+            for (Object n : input.getChildren()) {
 
-                LinkedHashSet<Literal> tempLits = new LinkedHashSet<Literal>();
-
-                for (Object n : input.getChildren()) {
-                    Node tempNode = (Node) n;
-                    tempLits.add((Literal) tempNode.getData());
-                }
-                tempClause.setLiterals(tempLits);
-
-                HashSet<Clause> tempClauses = new HashSet<Clause>();
-                tempClauses.add(tempClause);
-                return tempClauses;
-
-            } else {
-                HashSet<Clause> tempClauses = new HashSet<Clause>();
-                for (Object n : input.getChildren()) {
-
-                    Set<Clause> results = parseNode((Node) n);
-                    tempClauses.addAll(results);
-                }
-                return tempClauses;
+                Set<Clause> results = parseNode((Node) n);
+                tempClauses.addAll(results);
             }
+            return tempClauses;
+        }
+        else  {
+            LinkedHashSet<Literal> tempLits = new LinkedHashSet<Literal>();
+
+            for (Object n : input.getChildren()) {
+                Node tempNode = (Node) n;
+                tempLits.add((Literal) tempNode.getData());
+            }
+
+            Clause tempClause = new Clause();
+            tempClause.setLiterals(tempLits);
+
+            HashSet<Clause> tempClauses = new HashSet<Clause>();
+            tempClauses.add(tempClause);
+            return tempClauses;
         }
     }
-
 
     public Node parseString(String input) {
         if (isAtomic(input)) {
@@ -54,8 +53,13 @@ public class Parser {
             String[] substrings = firstAnd != -1 ? input.split("and") : input.split("or");
 
             Node newNode = new Node<Connective>(firstAnd != -1 ? Connective.AND : Connective.OR);
-            newNode.addChild(parseString(substrings[0]));
-            newNode.addChild(parseString(substrings[1]));
+
+            for (String str : substrings) {
+                newNode.addChild(parseString(str));
+            }
+
+            //newNode.addChild(parseString(substrings[0]));
+            //newNode.addChild(parseString(substrings[1]));
 
             return newNode;
         } else { //(a or b) and (not b or c) and ... and ...
@@ -70,16 +74,24 @@ public class Parser {
         }
     }
 
-    public Node negateNode(Node node) {
-        if (node.getChildren().size() == 0) {
-            ((Literal) node.getData()).setLiteral(!((Literal) node.getData()).isNot);
-        } else {
-            for (Object childnode : node.getChildren()) {
-                negateNode((Node) childnode);
-            }
-        }
 
-        return node;
+    //BB entails p, clause
+
+    public boolean entailment(BeliefBase bb, String question) {
+
+        bb.tell(question);
+
+        /*
+        Node result = parseString(question);
+
+        Literal l = (Literal) result.getData();
+
+        Literal notL = new Literal(!l.isNot, l.literal);
+        Node result = parseString(question);
+
+         */
+
+        return true;
     }
 
     private boolean isSimpleSentence(String input) {
