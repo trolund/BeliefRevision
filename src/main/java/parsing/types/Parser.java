@@ -77,21 +77,83 @@ public class Parser {
 
     //BB entails p, clause
 
-    public boolean entailment(BeliefBase bb, String question) {
+    //Resolution
+    //På hvilken form skal spørgsmålet stilles?
+    //Er det i orden kun at tage imod propositions på CNF.
+    //Hvad fuck er spørgsmål 3?
+    public boolean plResolution(BeliefBase bb, Clause question) {
+        //Ini clauses
+        Set<Clause> clauses = new HashSet<>();
+        clauses.addAll(bb.getClauses());
+        Clause negatedQuestion = negate(question);
+        clauses.add(negatedQuestion);
 
-        bb.tell(question);
+        //Ini new clauses
+        Set<Clause> newClauses = new HashSet<>();
 
-        /*
-        Node result = parseString(question);
+        while (true) {
+            //for each pair of clauses in set 'Clauses'
+            for (Clause c1 : clauses) {
+                for (Clause c2 : clauses) {
+                    if(!c1.equals(c2)) {
+                        Set<Clause> resolvedClause = plResolve(c1, c2);
+                        if (resolvedClause.contains(Clause.emptyClause)) //TODO check if resolvedClause contains an empty clause
+                            return true;
+                        newClauses.addAll(resolvedClause);
+                    }
+                }
+            }
+            if (clauses.containsAll(newClauses))
+                return false;
+            clauses.addAll(newClauses);
+        }
 
-        Literal l = (Literal) result.getData();
+    }
 
-        Literal notL = new Literal(!l.isNot, l.literal);
-        Node result = parseString(question);
+    public Set<Clause> plResolve(Clause c1, Clause c2) {
 
-         */
+        Set<Clause> resolvedClauses = new HashSet<>();
 
-        return true;
+        resolvedClauses.add(c1);
+        resolvedClauses.add(c2);
+
+        int complementaryLiterals = 0;
+
+        Set<Literal> complLiterals = new HashSet<>();
+
+        for (Literal l1 : c1.getLiterals()) {
+            for (Literal l2 : c2.getLiterals()) {
+                if(l1.literal.equals(l2.literal) && l1.isNot != l2.isNot) {
+                    complementaryLiterals += 1;
+                    complLiterals.add(l1);
+                    complLiterals.add(l2);
+                    //c1.removeLiteral(l1);
+                    //c2.removeLiteral(l2);
+                }
+            }
+        }
+
+        if(complementaryLiterals == 1) {
+            for(Clause c : resolvedClauses) {
+                Set<Literal> tempLits = c.getLiterals();
+
+                for(Literal l : complLiterals) {
+                    if(tempLits.contains(l))
+                        tempLits.remove(l);
+                }
+                c.setLiterals(tempLits);
+
+                //if(c.getLiterals().size() == 0)
+                //    resolvedClauses.remove(c);
+            }
+
+            //resolvedClauses.removeIf(c -> c.getLiterals().size() == 0);
+
+            return resolvedClauses;
+        }
+        else {
+            return resolvedClauses;
+        }
     }
 
     private boolean isSimpleSentence(String input) {
@@ -118,6 +180,13 @@ public class Parser {
 
     private boolean isNegated(String input) {
         return input.contains("not");
+    }
+
+    private Clause negate(Clause c) {
+        for (Literal l : c.getLiterals()) {
+            l.setLiteral(!l.isNot);
+        }
+        return c;
     }
 
 }

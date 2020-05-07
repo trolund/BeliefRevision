@@ -1,6 +1,7 @@
 package main;
 
 import java.util.Scanner;
+import java.util.Set;
 
 import kb.BeliefBase;
 import parsing.types.*;
@@ -21,9 +22,17 @@ public class main {
 
         bb.tell(proposition);
 
-        p.entailment(bb, "not d"); //(not a or b) and (b or c) and (not d) --> return true
+        String question = "(b or c)";
+        Set<Clause> clauses = p.parseNode(p.parseString(question));
 
-        //System.out.println(kb.getClauses());
+        /* for (Clause c : clauses) {
+            System.out.println(p.plResolution(bb, c));
+        }
+         */
+
+        //Clause question = new Clause();
+
+        //p.plResolution(bb, question);
 
         for (Clause c : bb.getClauses()) {
             System.out.println(c.toString());
