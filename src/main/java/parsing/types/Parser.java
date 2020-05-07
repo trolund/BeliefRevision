@@ -85,8 +85,8 @@ public class Parser {
         //Ini clauses
         Set<Clause> clauses = new HashSet<>();
         clauses.addAll(bb.getClauses());
-        Clause negatedQuestion = negate(question);
-        clauses.add(negatedQuestion);
+        Set<Clause> negatedQuestion = negate(question);
+        clauses.addAll(negatedQuestion);
 
         //Ini new clauses
         Set<Clause> newClauses = new HashSet<>();
@@ -97,7 +97,8 @@ public class Parser {
                 for (Clause c2 : clauses) {
                     if(!c1.equals(c2)) {
                         Set<Clause> resolvedClause = plResolve(c1, c2);
-                        if (resolvedClause.contains(Clause.emptyClause)) //TODO check if resolvedClause contains an empty clause
+                        List<Clause> resolvedList = new ArrayList<>(resolvedClause);
+                        if (resolvedList.contains(Clause.emptyClause))
                             return true;
                         newClauses.addAll(resolvedClause);
                     }
@@ -107,7 +108,6 @@ public class Parser {
                 return false;
             clauses.addAll(newClauses);
         }
-
     }
 
     public Set<Clause> plResolve(Clause c1, Clause c2) {
@@ -142,6 +142,9 @@ public class Parser {
                         tempLits.remove(l);
                 }
                 c.setLiterals(tempLits);
+
+                if(c.getLiterals().size() == 0)
+                    c = Clause.emptyClause;
 
                 //if(c.getLiterals().size() == 0)
                 //    resolvedClauses.remove(c);
@@ -182,11 +185,17 @@ public class Parser {
         return input.contains("not");
     }
 
-    private Clause negate(Clause c) {
+    private Set<Clause> negate(Clause c) {
+        Set<Clause> negatedClauses = new HashSet<>();
+
         for (Literal l : c.getLiterals()) {
-            l.setLiteral(!l.isNot);
+            //l.setLiteral(!l.isNot);
+            Clause negatedClause = new Clause();
+            negatedClause.setLiteral(new Literal(!l.isNot, l.literal));
+            negatedClauses.add(negatedClause);
         }
-        return c;
+        //return c;
+        return negatedClauses;
     }
 
 }
