@@ -14,29 +14,21 @@ public class main {
         System.out.println("Enter propositions");
 
         String proposition = "(not a or b or d) and (b or c)"; //  = myObj.nextLine();  // Read user input
-        System.out.println("Proposition is : " + proposition);  // Output user input
+        System.out.println("Proposition is : " + proposition + "\n");  // Output user input
 
         Parser p = new Parser();
-
         BeliefBase bb = new BeliefBase();
 
         bb.tell(proposition);
 
-        String question = "(b or c)";
+        String question = "(a or b or c)";
+
         Set<Clause> clauses = p.parseNode(p.parseString(question));
+        Clause c = clauses.iterator().next();
 
-        /* for (Clause c : clauses) {
-            System.out.println(p.plResolution(bb, c));
-        }
-         */
+        System.out.println(Clause.emptyClause.getLiterals().size());
 
-        //Clause question = new Clause();
-
-        //p.plResolution(bb, question);
-
-        for (Clause c : bb.getClauses()) {
-            System.out.println(c.toString());
-        }
+        System.out.println("Does " + proposition + " entails " + question + "?" + "\nResult: " + p.plResolution(bb, c));
     }
 
     public static String treeToString(Node root)
@@ -54,7 +46,6 @@ public class main {
         for (Object node: root.getChildren()) {
            b = b + treeToString((Node) node);
         }
-
 
         return b;
     }
