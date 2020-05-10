@@ -13,15 +13,27 @@ public class main {
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
         System.out.println("Enter propositions");
 
-        String proposition = "(not a or b or d) and (b or c)"; //  = myObj.nextLine();  // Read user input
+        String proposition = "(b or c) and (c)"; //  = myObj.nextLine();  // Read user input
         System.out.println("Proposition is : " + proposition + "\n");  // Output user input
+
+        //b or c
+        //c
+
+        //proof by contradiction:
+
+        //1 - b or c
+        //2 - c
+        //3 - not b
+        //4 - resolution 1 og 3 --> c
+        //5 - resolution 4 og 2 --> c
+
 
         Parser p = new Parser();
         BeliefBase bb = new BeliefBase();
 
         bb.tell(proposition);
 
-        String question = "(a or b or c)";
+        String question = myObj.nextLine(); //"(a or b or c)";
 
         Set<Clause> clauses = p.parseNode(p.parseString(question));
         Clause c = clauses.iterator().next();

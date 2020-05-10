@@ -13,7 +13,7 @@ public class BeliefBase {
         tell(parser.parseNode(result));
     }
 
-    private void tell(HashSet<Clause> set) {
+    private void tell(Set<Clause> set) {
         clauses.addAll(set);
     }
 

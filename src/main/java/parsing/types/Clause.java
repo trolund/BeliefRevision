@@ -25,17 +25,6 @@ public class Clause {
     public String toString() {
 
         StringBuilder str = new StringBuilder();
-
-        /*
-        for (Literal l : literals) {
-            if(l.isNot)
-                str.append("not ").append(l.literal);
-            else
-                str.append(" ").append(l.literal);
-            str.append(" or ");
-        }
-         */
-
         Iterator<Literal> iterator = literals.iterator();
 
         while(iterator.hasNext()) {
@@ -60,7 +49,12 @@ public class Clause {
             return false;
         if (obj == this)
             return true;
-        return this.getLiterals().size() == ((Clause) obj).getLiterals().size();
+
+        if(this.getLiterals().size() == ((Clause) obj).getLiterals().size()) {
+            return this.getLiterals().contains(((Clause) obj).getLiterals());
+        }
+
+        return false;
     }
 
     /*

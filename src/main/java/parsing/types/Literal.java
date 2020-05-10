@@ -1,5 +1,7 @@
 package parsing.types;
 
+import java.util.Objects;
+
 public class Literal implements Iexp<String> {
     @Override
     public String toString() {
@@ -25,4 +27,14 @@ public class Literal implements Iexp<String> {
     public void setExp(String exp) {
         this.literal = exp;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Literal literal1 = (Literal) o;
+        return isNot == literal1.isNot &&
+                Objects.equals(literal, literal1.literal);
+    }
+
 }

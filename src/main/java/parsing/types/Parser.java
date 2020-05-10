@@ -13,7 +13,7 @@ public class Parser {
                 .replace(" ", "");
     }
 
-    public HashSet<Clause> parseNode(Node input) {
+    public Set<Clause> parseNode(Node input) {
         if(input.getData().equals(Connective.AND)) {
             HashSet<Clause> tempClauses = new HashSet<Clause>();
             for (Object n : input.getChildren()) {
@@ -23,8 +23,21 @@ public class Parser {
             }
             return tempClauses;
         }
-        else  {
-            LinkedHashSet<Literal> tempLits = new LinkedHashSet<Literal>();
+        else if(input.getData() instanceof Literal) {
+            Set<Literal> tempLits = new HashSet<Literal>();
+
+            tempLits.add((Literal) input.getData());
+
+            Clause tempClause = new Clause();
+
+            tempClause.setLiterals(tempLits);
+
+            Set<Clause> tempClauses = new HashSet<Clause>();
+            tempClauses.add(tempClause);
+            return tempClauses;
+        }
+        else  { //Connective equals "OR"
+            Set<Literal> tempLits = new HashSet<Literal>();
 
             for (Object n : input.getChildren()) {
                 Node tempNode = (Node) n;
@@ -34,7 +47,7 @@ public class Parser {
             Clause tempClause = new Clause();
             tempClause.setLiterals(tempLits);
 
-            HashSet<Clause> tempClauses = new HashSet<Clause>();
+            Set<Clause> tempClauses = new HashSet<Clause>();
             tempClauses.add(tempClause);
             return tempClauses;
         }
@@ -74,13 +87,6 @@ public class Parser {
         }
     }
 
-
-    //BB entails p, clause
-
-    //Resolution
-    //På hvilken form skal spørgsmålet stilles?
-    //Er det i orden kun at tage imod propositions på CNF.
-    //Hvad fuck er spørgsmål 3?
     public boolean plResolution(BeliefBase bb, Clause question) {
         //Ini clauses
         Set<Clause> clauses = new HashSet<>();
@@ -106,6 +112,7 @@ public class Parser {
             }
             if (clauses.containsAll(newClauses))
                 return false;
+
             clauses.addAll(newClauses);
         }
     }
@@ -113,9 +120,6 @@ public class Parser {
     public Set<Clause> plResolve(Clause c1, Clause c2) {
 
         Set<Clause> resolvedClauses = new HashSet<>();
-
-        resolvedClauses.add(c1);
-        resolvedClauses.add(c2);
 
         int complementaryLiterals = 0;
 
@@ -127,30 +131,25 @@ public class Parser {
                     complementaryLiterals += 1;
                     complLiterals.add(l1);
                     complLiterals.add(l2);
-                    //c1.removeLiteral(l1);
-                    //c2.removeLiteral(l2);
                 }
             }
         }
 
         if(complementaryLiterals == 1) {
-            for(Clause c : resolvedClauses) {
-                Set<Literal> tempLits = c.getLiterals();
+            Set<Literal> allLiterals = new HashSet<>();
+            allLiterals.addAll(c1.getLiterals());
+            allLiterals.addAll(c2.getLiterals());
 
-                for(Literal l : complLiterals) {
-                    if(tempLits.contains(l))
-                        tempLits.remove(l);
-                }
-                c.setLiterals(tempLits);
-
-                if(c.getLiterals().size() == 0)
-                    c = Clause.emptyClause;
-
-                //if(c.getLiterals().size() == 0)
-                //    resolvedClauses.remove(c);
+            for(Literal l : complLiterals) {
+                if (allLiterals.contains(l))
+                    allLiterals.remove(l);
             }
 
-            //resolvedClauses.removeIf(c -> c.getLiterals().size() == 0);
+            Clause newClause = new Clause();
+
+            newClause.setLiterals(allLiterals);
+
+            resolvedClauses.add(newClause);
 
             return resolvedClauses;
         }
