@@ -95,7 +95,7 @@ public class Parser {
         clauses.addAll(negatedQuestion);
 
         //Ini new clauses
-        Set<Clause> newClauses = new HashSet<>();
+        HashSet<Clause> newClauses = new HashSet<>();
 
         while (true) {
             //for each pair of clauses in set 'Clauses'
@@ -103,8 +103,8 @@ public class Parser {
                 for (Clause c2 : clauses) {
                     if(!c1.equals(c2)) {
                         Set<Clause> resolvedClause = plResolve(c1, c2);
-                        List<Clause> resolvedList = new ArrayList<>(resolvedClause);
-                        if (resolvedList.contains(Clause.emptyClause))
+                       // List<Clause> resolvedList = new ArrayList<>(resolvedClause);
+                        if (resolvedClause.contains(Clause.emptyClause))
                             return true;
                         newClauses.addAll(resolvedClause);
                     }

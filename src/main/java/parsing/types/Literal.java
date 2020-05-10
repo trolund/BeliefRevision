@@ -37,4 +37,10 @@ public class Literal implements Iexp<String> {
                 Objects.equals(literal, literal1.literal);
     }
 
+    @Override
+    public int hashCode() {
+        char c = this.literal.charAt(0);
+        return this.isNot ? -c : c;
+    }
+
 }

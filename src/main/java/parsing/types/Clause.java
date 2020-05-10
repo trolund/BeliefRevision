@@ -42,6 +42,7 @@ public class Clause {
 
     //Source for overriding equals + hashCode: https://dzone.com/articles/working-with-hashcode-and-equals-in-java
 
+/*
     @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
@@ -57,12 +58,33 @@ public class Clause {
         return false;
     }
 
-    /*
     @Override
     public int hashCode() {
-        //return Objects.hash(literals.size());
-        return this.getLiterals().size();
+        return Objects.hash(literals.hashCode());
     }
 
-     */
+*/
+
+    @Override
+    public int hashCode() {
+        int hashCode = 1;
+        for (Literal e : literals)
+            hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
+        return hashCode;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Clause other = (Clause) obj;
+        if (this.hashCode() != other.hashCode())
+            return false;
+        return true;
+    }
+
 }

@@ -1,5 +1,6 @@
 package main;
 
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -9,6 +10,24 @@ import parsing.types.*;
 public class main {
 
     public static void main(String[] args) {
+        /*
+        HashSet<Clause> newClauses = new HashSet<>();
+
+        Clause c = new Clause();
+        Set<Literal> lit = new HashSet<>();
+        lit.add(new Literal(false, "e"));
+        c.setLiterals(lit);
+
+        Clause c2 = new Clause();
+        Set<Literal> lit2 = new HashSet<>();
+        lit2.add(new Literal(false, "e"));
+        c2.setLiterals(lit2);
+
+        newClauses.add(c);
+        newClauses.add(c2);
+
+        System.out.println(newClauses.toString());
+        */
 
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
         System.out.println("Enter propositions");
@@ -33,7 +52,7 @@ public class main {
 
         bb.tell(proposition);
 
-        String question = myObj.nextLine(); //"(a or b or c)";
+        String question = "(b)"; //myObj.nextLine(); //"(a or b or c)";
 
         Set<Clause> clauses = p.parseNode(p.parseString(question));
         Clause c = clauses.iterator().next();
@@ -41,6 +60,8 @@ public class main {
         System.out.println(Clause.emptyClause.getLiterals().size());
 
         System.out.println("Does " + proposition + " entails " + question + "?" + "\nResult: " + p.plResolution(bb, c));
+
+
     }
 
     public static String treeToString(Node root)
