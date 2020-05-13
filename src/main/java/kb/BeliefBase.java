@@ -17,26 +17,22 @@ public class BeliefBase {
         clauses.addAll(set);
     }
 
-    private List<Character> getAllSymbols(Node node) {
-        if (node.getChildren().size() == 0) {
-            char c = ((Literal) node.getData()).literal.charAt(0);
-            List<Character> shortList = new ArrayList<>();
-            shortList.add(c);
-            return shortList;
-        } else {
-            List<Character> longList = new ArrayList<>();
+    public void contractionBB(Clause c) {
+        if(this.clauses.contains(c))
+            this.clauses.remove(c);
+    }
 
-            for (Object childNode : node.getChildren()) {
-                longList.addAll(getAllSymbols((Node) childNode));
-            }
-
-            LinkedHashSet<Character> hashSet = new LinkedHashSet<>(longList);
-            ArrayList<Character> listWithoutDuplicates = new ArrayList<>(hashSet);
-            return listWithoutDuplicates;
-        }
+    public void expansionBB(Clause c) {
+        if(!this.clauses.contains(c))
+            this.clauses.add(c);
     }
 
     public HashSet<Clause> getClauses() {
         return clauses;
+    }
+
+    @Override
+    public String toString() {
+        return "Belief base: " + this.clauses.toString();
     }
 }
