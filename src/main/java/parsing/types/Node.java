@@ -15,6 +15,7 @@ public class Node<T> {
                 '}';
     }
 
+
     private List<Node<T>> children = new ArrayList<>();
 
     private Node<T> parent = null;
@@ -27,6 +28,10 @@ public class Node<T> {
         child.setParent(this);
         this.children.add(child);
         return child;
+    }
+
+    public void setChildren(List<Node<T>> children) {
+        this.children = children;
     }
 
     public void addChildren(List<Node<T>> children) {

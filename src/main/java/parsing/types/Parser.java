@@ -14,16 +14,7 @@ public class Parser {
     }
 
     public Set<Clause> parseNode(Node input) {
-        if(input.getData().equals(Connective.AND)) {
-            HashSet<Clause> tempClauses = new HashSet<Clause>();
-            for (Object n : input.getChildren()) {
-
-                Set<Clause> results = parseNode((Node) n);
-                tempClauses.addAll(results);
-            }
-            return tempClauses;
-        }
-        else if(input.getData() instanceof Literal) {
+        if(input.getData() instanceof Literal) {
             Set<Literal> tempLits = new HashSet<Literal>();
 
             tempLits.add((Literal) input.getData());
@@ -35,20 +26,13 @@ public class Parser {
             Set<Clause> tempClauses = new HashSet<Clause>();
             tempClauses.add(tempClause);
             return tempClauses;
-        }
-        else  { //Connective equals "OR"
-            Set<Literal> tempLits = new HashSet<Literal>();
-
+        } else {
+            HashSet<Clause> tempClauses = new HashSet<Clause>();
             for (Object n : input.getChildren()) {
-                Node tempNode = (Node) n;
-                tempLits.add((Literal) tempNode.getData());
+
+                Set<Clause> results = parseNode((Node) n);
+                tempClauses.addAll(results);
             }
-
-            Clause tempClause = new Clause();
-            tempClause.setLiterals(tempLits);
-
-            Set<Clause> tempClauses = new HashSet<Clause>();
-            tempClauses.add(tempClause);
             return tempClauses;
         }
     }
@@ -57,34 +41,78 @@ public class Parser {
         if (isAtomic(input)) {
             Literal lit = new Literal(isNegated(input), beautify(input));
             return new Node<Literal>(lit);
-        } else if (isSimpleSentence(input)) {
+        } else {
             //example, a and b
+            Node newNode = null;
+            // handle "And"
+            if(input.indexOf("and") != -1) {
 
-            int firstAnd = input.indexOf("and");
-            int firstOr = input.indexOf("or");
+                String[] substrings = input.split("and");
+                newNode = new Node<Connective>(Connective.AND);
 
-            String[] substrings = firstAnd != -1 ? input.split("and") : input.split("or");
+                for (String str : substrings) {
+                    newNode.addChild(parseString(str));
+                }
 
-            Node newNode = new Node<Connective>(firstAnd != -1 ? Connective.AND : Connective.OR);
+                // handle "Or"
+            }else if(input.indexOf("or") != -1) {
+                String[] substrings = input.split("or");
 
-            for (String str : substrings) {
-                newNode.addChild(parseString(str));
+                newNode = new Node<Connective>(Connective.OR);
+
+                for (String str : substrings) {
+                    newNode.addChild(parseString(str));
+                }
+
             }
+            else if (input.indexOf("->") != -1) { // bicondesion
+                String[] substrings = input.split("->");
 
-            //newNode.addChild(parseString(substrings[0]));
-            //newNode.addChild(parseString(substrings[1]));
+                newNode = new Node<Connective>(Connective.OR);
+
+                for (String str : substrings) {
+                    newNode.addChild(parseString(str));
+                }
+
+            }else {
+                String[] substrings = input.split("<->");
+
+                newNode = new Node<Connective>(Connective.OR);
+
+                for (String str : substrings) {
+                    newNode.addChild(parseString(str));
+                }
+            }
 
             return newNode;
-        } else { //(a or b) and (not b or c) and ... and ...
-            String[] substrings = input.split("and");
+        }
+        /*
+        else { //(a or b) and (not b or c) and ... and ...
 
-            Node root = new Node<Connective>(Connective.AND);
+            Node root = null;
 
-            for (String str : substrings) {
-                root.addChild(parseString(str));
+            if(input.indexOf("and") != -1) {
+                String[] substrings = input.split("and");
+
+                root = new Node<Connective>(Connective.AND);
+
+                for (String str : substrings) {
+                    root.addChild(parseString(str));
+                }
+            }else if(input.indexOf("or") != -1) {
+
             }
+            else if (input.indexOf("->") != -1) { // bicondesion
+
+            }else {
+
+            }
+
+
             return root;
         }
+        */
+
     }
 
     public boolean plResolution(BeliefBase bb, Clause question) {
@@ -162,6 +190,8 @@ public class Parser {
         int sum = 0;
         sum = sum + numberOfConnectives(input, "and");
         sum = sum + numberOfConnectives(input, "or");
+        sum = sum + numberOfConnectives(input, "->");
+        sum = sum + numberOfConnectives(input, "<->");
         return sum == 1;
     }
 
@@ -195,6 +225,63 @@ public class Parser {
         }
         //return c;
         return negatedClauses;
+    }
+
+    public Node convertToCNF (Node nonCNFnonde) {
+        // replace
+        if(nonCNFnonde.getData() instanceof Connective && nonCNFnonde.getData() == Connective.IMPLICATION){
+            return replaceImplication(nonCNFnonde);
+        }else if (nonCNFnonde.getData() instanceof Connective && nonCNFnonde.getData() == Connective.BICONDITIONAL){
+            Node tempNode = nonCNFnonde;
+            List<Node> children = tempNode.getChildren();
+
+            Node leftofCon = new Node(Connective.IMPLICATION);
+            leftofCon.setChildren(children);
+
+            Node rightofCon = new Node(Connective.IMPLICATION);
+            List<Node> childrenForRight = tempNode.getChildren();
+            Collections.reverse(childrenForRight);
+            rightofCon.setChildren(childrenForRight);
+
+
+            List<Node> newChildren = new ArrayList();
+            newChildren.add(leftofCon);
+            newChildren.add(rightofCon);
+            tempNode.setChildren(newChildren);
+
+            return replaceImplication(tempNode);
+        } else {
+            Node root = new Node(Connective.AND);
+            for (Object n : nonCNFnonde.getChildren()) {
+                root.addChild(convertToCNF((Node) n));
+            }
+            return root;
+        }
+    }
+
+    private Node replaceImplication (Node nonCNFnonde) {
+        Node tempNode = nonCNFnonde;
+        List<Node> children = tempNode.getChildren();
+        List<Node> updatedChildren = new ArrayList();
+
+        updatedChildren.add(negateNode(children.get(0)));
+        updatedChildren.add(children.get(1));
+        tempNode.setChildren(updatedChildren);
+        return tempNode;
+    }
+
+    private Node negateNode (Node node){
+        if(node.getData() instanceof Literal){
+            Literal negatedLit = (Literal) node.getData();
+            negatedLit.isNot = !negatedLit.isNot;
+            return new Node<Literal>(negatedLit);
+        }else {
+            Node root = null;
+            for (Object n : node.getChildren()) {
+                root = negateNode(node);
+            }
+            return root;
+        }
     }
 
 }
