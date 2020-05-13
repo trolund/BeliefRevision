@@ -115,76 +115,6 @@ public class Parser {
 
     }
 
-    public boolean plResolution(BeliefBase bb, Clause question) {
-        //Ini clauses
-        Set<Clause> clauses = new HashSet<>();
-        clauses.addAll(bb.getClauses());
-        Set<Clause> negatedQuestion = negate(question);
-        clauses.addAll(negatedQuestion);
-
-        //Ini new clauses
-        HashSet<Clause> newClauses = new HashSet<>();
-
-        while (true) {
-            //for each pair of clauses in set 'Clauses'
-            for (Clause c1 : clauses) {
-                for (Clause c2 : clauses) {
-                    if(!c1.equals(c2)) {
-                        Set<Clause> resolvedClause = plResolve(c1, c2);
-                       // List<Clause> resolvedList = new ArrayList<>(resolvedClause);
-                        if (resolvedClause.contains(Clause.emptyClause))
-                            return true;
-                        newClauses.addAll(resolvedClause);
-                    }
-                }
-            }
-            if (clauses.containsAll(newClauses))
-                return false;
-
-            clauses.addAll(newClauses);
-        }
-    }
-
-    public Set<Clause> plResolve(Clause c1, Clause c2) {
-
-        Set<Clause> resolvedClauses = new HashSet<>();
-
-        int complementaryLiterals = 0;
-
-        Set<Literal> complLiterals = new HashSet<>();
-
-        for (Literal l1 : c1.getLiterals()) {
-            for (Literal l2 : c2.getLiterals()) {
-                if(l1.literal.equals(l2.literal) && l1.isNot != l2.isNot) {
-                    complementaryLiterals += 1;
-                    complLiterals.add(l1);
-                    complLiterals.add(l2);
-                }
-            }
-        }
-
-        if(complementaryLiterals == 1) {
-            Set<Literal> allLiterals = new HashSet<>();
-            allLiterals.addAll(c1.getLiterals());
-            allLiterals.addAll(c2.getLiterals());
-
-            for(Literal l : complLiterals) {
-                if (allLiterals.contains(l))
-                    allLiterals.remove(l);
-            }
-
-            Clause newClause = new Clause();
-
-            newClause.setLiterals(allLiterals);
-
-            resolvedClauses.add(newClause);
-
-            return resolvedClauses;
-        }
-        else {
-            return resolvedClauses;
-        }
-    }
 
     private boolean isSimpleSentence(String input) {
         int sum = 0;
@@ -214,18 +144,7 @@ public class Parser {
         return input.contains("not");
     }
 
-    private Set<Clause> negate(Clause c) {
-        Set<Clause> negatedClauses = new HashSet<>();
 
-        for (Literal l : c.getLiterals()) {
-            //l.setLiteral(!l.isNot);
-            Clause negatedClause = new Clause();
-            negatedClause.setLiteral(new Literal(!l.isNot, l.literal));
-            negatedClauses.add(negatedClause);
-        }
-        //return c;
-        return negatedClauses;
-    }
 
     public Node convertToCNF (Node nonCNFnonde) {
         // replace

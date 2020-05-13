@@ -9,9 +9,7 @@ public class BeliefBase {
     private HashSet<Clause> clauses = new HashSet<Clause>();
 
     public void tell(String aSentence) {
-        Node result = parser.convertToCNF(parser.parseString(aSentence));
-        System.out.println(result);
-        System.out.println(parser.parseString(aSentence));
+        Node result = parser.parseString(aSentence);
         tell(parser.parseNode(result));
     }
 
@@ -19,15 +17,11 @@ public class BeliefBase {
         clauses.addAll(set);
     }
 
-    public void contractionBB(Clause c) {
-        if(this.clauses.contains(c))
-            this.clauses.remove(c);
-    }
 
-    public void expansionBB(Clause c) {
-        if(!this.clauses.contains(c))
-            this.clauses.add(c);
-    }
+
+
+
+
 
 
 
