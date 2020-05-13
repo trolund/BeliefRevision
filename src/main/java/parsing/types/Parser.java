@@ -59,20 +59,46 @@ public class Parser {
             return new Node<Literal>(lit);
         } else if (isSimpleSentence(input)) {
             //example, a and b
+            Node newNode = null;
+            // handle "And"
+            if(input.indexOf("and") != -1) {
 
-            int firstAnd = input.indexOf("and");
-            int firstOr = input.indexOf("or");
+                String[] substrings = input.split("and");
+                newNode = new Node<Connective>(Connective.AND);
 
-            String[] substrings = firstAnd != -1 ? input.split("and") : input.split("or");
+                for (String str : substrings) {
+                    newNode.addChild(parseString(str));
+                }
 
-            Node newNode = new Node<Connective>(firstAnd != -1 ? Connective.AND : Connective.OR);
+                // handle "Or"
+            }else if(input.indexOf("or") != -1) {
+                String[] substrings = input.split("or");
 
-            for (String str : substrings) {
-                newNode.addChild(parseString(str));
+                newNode = new Node<Connective>(Connective.OR);
+
+                for (String str : substrings) {
+                    newNode.addChild(parseString(str));
+                }
+
             }
+            else if (input.indexOf("->") != -1) { // bicondesion
+                String[] substrings = input.split("->");
 
-            //newNode.addChild(parseString(substrings[0]));
-            //newNode.addChild(parseString(substrings[1]));
+                newNode = new Node<Connective>(Connective.OR);
+
+                for (String str : substrings) {
+                    newNode.addChild(parseString(str));
+                }
+
+            }else {
+                String[] substrings = input.split("<->");
+
+                newNode = new Node<Connective>(Connective.OR);
+
+                for (String str : substrings) {
+                    newNode.addChild(parseString(str));
+                }
+            }
 
             return newNode;
         } else { //(a or b) and (not b or c) and ... and ...
@@ -162,6 +188,8 @@ public class Parser {
         int sum = 0;
         sum = sum + numberOfConnectives(input, "and");
         sum = sum + numberOfConnectives(input, "or");
+        sum = sum + numberOfConnectives(input, "->");
+        sum = sum + numberOfConnectives(input, "<->");
         return sum == 1;
     }
 
@@ -195,6 +223,17 @@ public class Parser {
         }
         //return c;
         return negatedClauses;
+    }
+
+    private Clause convertToCNF (Node nonCNFnonde) {
+        // replace
+        if(nonCNFnonde.getData() instanceof Connective && nonCNFnonde.getData() == Connective.IMPLICATION){
+
+
+        }
+
+
+
     }
 
 }

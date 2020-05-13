@@ -4,8 +4,6 @@ public enum Connective {
 
     AND,
     OR,
-    NOT,
     IMPLICATION,
     BICONDITIONAL
-
 }

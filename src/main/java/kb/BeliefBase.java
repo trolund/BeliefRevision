@@ -36,6 +36,8 @@ public class BeliefBase {
         }
     }
 
+
+
     public HashSet<Clause> getClauses() {
         return clauses;
     }
