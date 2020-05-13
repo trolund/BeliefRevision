@@ -54,6 +54,8 @@ public class main {
 
         String question = "(b)"; //myObj.nextLine(); //"(a or b or c)";
 
+
+
         Set<Clause> clauses = p.parseNode(p.parseString(question));
         Clause c = clauses.iterator().next();
 
