@@ -5,6 +5,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 import kb.BeliefBase;
+import kb.kbController;
 import parsing.types.*;
 
 public class main {
@@ -18,6 +19,7 @@ public class main {
         Set<Clause> clauses = new HashSet<>();
         Parser p = new Parser();
         BeliefBase bb = new BeliefBase();
+        kbController kbC = new kbController();
 
         System.out.println("You have the following options to choose from:\n1. View the current belief base\n2. Add new belief(s) to the belief base" +
                 "\n3. Remove a belief from the belief base" +
@@ -41,7 +43,7 @@ public class main {
                     node = p.parseString(input);
                     clauses.addAll(p.parseNode(node));
                     for(Clause c : clauses) {
-                        bb.contractionBB(c);
+                        kbC.contractionBB(bb, c);
                     }
                     System.out.println("Belief base now contains: " + bb.toString());
                     break;
@@ -52,7 +54,7 @@ public class main {
                     clauses.addAll(p.parseNode(node));
                     boolean result = true;
                     for(Clause c : clauses) {
-                        if(!p.plResolution(bb, c)) {
+                        if(kbC.plResolution(bb.getClauses(), c)) {
                             result = false;
                             break;
                         }

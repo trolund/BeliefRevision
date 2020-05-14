@@ -8,13 +8,19 @@ import java.util.stream.Collectors;
 
 public class kbController {
 
+    public boolean plResolution(List<Clause> inputClauses, Clause question) {
+        Set<Clause> clauses = new HashSet<>(inputClauses);
+        clauses.add(question);
+        return plResolution(clauses, question);
+    }
+
     public  boolean plResolution(Clause inputClauses, Clause question){
         HashSet<Clause> clauses = new HashSet();
         clauses.add(inputClauses);
         return  plResolution(clauses, question);
     }
 
-    public boolean plResolution(HashSet<Clause> inputClauses, Clause question) {
+    public boolean plResolution(Set<Clause> inputClauses, Clause question) {
         //Ini clauses
         Set<Clause> clauses = new HashSet<>();
         clauses.addAll(inputClauses);
@@ -111,14 +117,51 @@ public class kbController {
     *  */
 
     public void contractionBB(BeliefBase bb, Clause c) {
-            HashSet<Clause> remainders = new HashSet();
+        HashSet<Clause> remainders = new HashSet();
 
-            for (Clause c1 : bb.getClauses()) {
-                if(!plResolution(c1, c)) {
-                    remainders.add(c1);
+        for (Clause c1 : bb.getClauses()) {
+            if(!plResolution(c1, c)) {
+                remainders.add(c1);
+            }
+        }
+
+        //Remainders: {c1, c2, c3, c4, c5 osv...}
+
+        ArrayList<Clause> checkList = (ArrayList<Clause>) remainders.stream().collect(Collectors.toList()); //Liste af remainders {c1, c2, c3, c4....} hvor cn = vilkårlig clause
+        remainders.clear();
+
+        Set<List<Clause>> tempHash = new HashSet<>(); //[{c1,c2,c3}, {c4, c6}]
+
+        List<Clause> remainderList = new ArrayList();
+
+        while (checkList.size() != 0) {
+
+            Clause initialClause = checkList.get(0);
+            remainderList.add(initialClause);
+
+            for(int i = 1; i < checkList.size(); i++) {
+                remainderList.add(checkList.get(i));
+
+                if(plResolution(remainderList, c)) {
+                    remainderList.remove(checkList.get(i));
                 }
             }
-            /*
+
+            checkList.removeAll(remainderList);
+            tempHash.add(remainderList); //tilføj remainder sæt til tempHash f.eks {c1, c3, c4} --> nye første element er nu c2 og nyt remainder sæt er f.eks. {c2, c5, c6}
+        }
+
+        //Nyt sæt: {c1, c2} <- hvis det implier, da tilføj forrige 'iteration' {c1} til remaindersListe
+        //Ellers tilføj næste clause til sættet, dvs: {c1, c2, c3}
+
+        //[{c1, c3, c4}, {c2}, {c5, c6}]
+
+        //Lav rangeringsfidus og udvælg evt. en andel af disse remainders
+
+        //[{c1, c3, c4}, {c2}] --> det er vores belief base nye beliefs.
+
+
+                    /*
 
             remainderset = arraylist()
 
@@ -137,28 +180,6 @@ while(!listofclauses.empty){
     listofclauses.removerange(counter)
 }
              */
-
-            ArrayList<Clause> checkList = (ArrayList<Clause>) remainders.stream().collect(Collectors.toList());
-            remainders.clear();
-
-            HashSet<List<Clause>> tempHash = new HashSet<>();
-
-            List<Clause> remainderList = new ArrayList();
-            Iterator i = checkList.listIterator();
-
-            while (i.hasNext()) {
-
-                if(plResolution(remainders, c)){
-                    tempHash.add(remainderList);
-                    remainderList.clear();
-                }else {
-                    remainderList.add((Clause) i.next());
-                }
-            }
-
-
-            rank
-
 
     }
 

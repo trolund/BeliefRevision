@@ -26,7 +26,22 @@ public class Parser {
             Set<Clause> tempClauses = new HashSet<Clause>();
             tempClauses.add(tempClause);
             return tempClauses;
-        } else {
+        }
+        else if(isOrSentence(input)) {
+            Set<Literal> literals = new HashSet<>();
+            Set<Clause> tempClauses = new HashSet<>();
+            for (Object n : input.getChildren()) {
+                Set<Clause> results = parseNode((Node) n);
+                for (Clause c : results) {
+                    literals.addAll(c.getLiterals());
+                }
+            }
+            Clause clause = new Clause();
+            clause.setLiterals(literals);
+            tempClauses.add(clause);
+            return tempClauses;
+        }
+        else {
             HashSet<Clause> tempClauses = new HashSet<Clause>();
             for (Object n : input.getChildren()) {
 
@@ -114,7 +129,26 @@ public class Parser {
         */
 
     }
+        //(a or b) --> [a, b]
+    private boolean isOrSentence(Node node) {
+        if(node.getData() instanceof Literal) {
+            return true;
+        }
+        else if(node.getData() instanceof Connective) {
+            return node.getData() == Connective.OR;
+        }
+        else{
+            List<Boolean> bools = new ArrayList<>();
+            for(Object n : node.getChildren()) {
+                bools.add(isOrSentence((Node) n));
+            }
+            return !bools.contains(false);
+        }
+    }
 
+    private boolean isOrSentence(String input) {
+        return input.indexOf("and") == -1 && input.indexOf("<->") == -1 && input.indexOf("->") == -1 && input.indexOf("or") != -1;
+    }
 
     private boolean isSimpleSentence(String input) {
         int sum = 0;
