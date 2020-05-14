@@ -10,7 +10,6 @@ public class kbController {
 
     public boolean plResolution(List<Clause> inputClauses, Clause question) {
         Set<Clause> clauses = new HashSet<>(inputClauses);
-        clauses.add(question);
         return plResolution(clauses, question);
     }
 
@@ -125,7 +124,8 @@ public class kbController {
             }
         }
 
-        //Remainders: {c1, c2, c3, c4, c5 osv...}
+        // Belief base: {p, q, p or q, not p or q} c = {q}
+        //{p, p or q, not p or q}
 
         ArrayList<Clause> checkList = (ArrayList<Clause>) remainders.stream().collect(Collectors.toList()); //Liste af remainders {c1, c2, c3, c4....} hvor cn = vilkårlig clause
         remainders.clear();
@@ -134,52 +134,101 @@ public class kbController {
 
         List<Clause> remainderList = new ArrayList();
 
+        /*
         while (checkList.size() != 0) {
 
-            Clause initialClause = checkList.get(0);
+            Clause initialClause = checkList.get(0); //p
             remainderList.add(initialClause);
 
             for(int i = 1; i < checkList.size(); i++) {
-                remainderList.add(checkList.get(i));
+                Clause clause = checkList.get(i);
+                remainderList.add(clause); //p + p or q + not p or q
 
                 if(plResolution(remainderList, c)) {
-                    remainderList.remove(checkList.get(i));
+                    remainderList.remove(clause); //p + p or q
                 }
             }
 
-            checkList.removeAll(remainderList);
-            tempHash.add(remainderList); //tilføj remainder sæt til tempHash f.eks {c1, c3, c4} --> nye første element er nu c2 og nyt remainder sæt er f.eks. {c2, c5, c6}
+            checkList.removeAll(remainderList); //p + p or q  ---> not p or q
+            List<Clause> tempList = new ArrayList<>(remainderList);
+            tempHash.add(tempList); //Liste1 : p + p or q, Liste2: not p or q
+            remainderList.clear();
+        }
+         */
+
+        //Prøver at implementere således algoritmen tager stilling til ALLE kombinationer
+        while (checkList.size() != 0) {
+
+            //Clause initialClause = checkList.get(0); //p
+            //remainderList.add(initialClause);
+
+            int size = 1;
+            int maxSize = 1;
+
+            for (int i = 0; i < checkList.size(); i++) {
+                Clause firstClause = checkList.get(i); // {ci}
+                remainderList.add(firstClause);
+
+                for (int j = 0; j < checkList.size(); j++) {
+                    Clause clause = checkList.get(j);
+                    if(!firstClause.equals(clause) && !remainderList.contains(clause)) { //Don't add duplicates
+                        remainderList.add(clause);
+
+                        if (plResolution(remainderList, c)) {
+                            remainderList.remove(clause);
+                            size--;
+                        }
+                        size++;
+                    }
+                }
+
+                if(size > maxSize) {
+                    maxSize = size;
+                    List<Clause> tempList = new ArrayList<>(remainderList);
+                    remainderList.clear();
+                    //tempHash.clear();
+                    tempHash.add(tempList);
+                }
+                size = 0;
+            }
+
+            int listSize = 0;
+            for(List l : tempHash) {
+                if(l.size() > listSize)
+                    listSize = l.size();
+            }
+
+            Iterator iterator = tempHash.iterator();
+
+            List<Clause> largestRemainder = new ArrayList<>();
+
+            while(iterator.hasNext()) {
+                List<Clause> next = (List<Clause>) iterator.next();
+                if(next.size() == listSize)
+                    largestRemainder.addAll(next);
+
+            }
+
+
+            checkList.removeAll(largestRemainder); //p + p or q  ---> not p or q
+            //List<Clause> tempList = new ArrayList<>(remainderList);
+            //tempHash.add(tempList); //Liste1 : p + p or q, Liste2: not p or q
+            //remainderList.clear();
         }
 
-        //Nyt sæt: {c1, c2} <- hvis det implier, da tilføj forrige 'iteration' {c1} til remaindersListe
-        //Ellers tilføj næste clause til sættet, dvs: {c1, c2, c3}
-
-        //[{c1, c3, c4}, {c2}, {c5, c6}]
-
-        //Lav rangeringsfidus og udvælg evt. en andel af disse remainders
-
-        //[{c1, c3, c4}, {c2}] --> det er vores belief base nye beliefs.
-
-
-                    /*
-
-            remainderset = arraylist()
-
-listofclauses = arraylist(clauses)
-while(!listofclauses.empty){
-    clauseset = arraylist()
-    counter = 0
-    foreach (clause in listofclauses){
-        clauseset.add(clause)
-        if(entails(clauseset, something)){
-            remainderset.add(clauseset)
-            break;
+        System.out.println("Remainder sets:");
+        for(List l : tempHash) {
+            System.out.println(l.toString());
         }
-        counter++;
-    }
-    listofclauses.removerange(counter)
-}
-             */
+
+        //Selection function
+
+        //Tilføj 'bedste' remainder list til belief base
+
+        bb.getClauses().clear(); //Clearer belief base
+        for(List l : tempHash) { //Looper og tempHash som indeholder sæt af lister af clauses
+            bb.getClauses().addAll(l); //tilføjer alle lister af clauses til belief base
+        }
 
     }
 
@@ -190,8 +239,6 @@ while(!listofclauses.empty){
         }
         return sum;
     }
-
-
 
     private int rank(Clause c) {
         return c.getLiterals().size();

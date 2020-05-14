@@ -18,14 +18,6 @@ public class BeliefBase {
         clauses.addAll(set);
     }
 
-
-
-
-
-
-
-
-
     public HashSet<Clause> getClauses() {
         return clauses;
     }

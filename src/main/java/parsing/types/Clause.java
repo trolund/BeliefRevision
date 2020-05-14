@@ -5,9 +5,15 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
-public class Clause {
+public class Clause implements Cloneable {
 
     public static final Clause emptyClause = new Clause(); // Fra https://github.com/aimacode/aima-java/blob/54ddca0f2f79cb3f2cbf9d0f3293ebd95d785d13/aima-core/src/main/java/aima/core/logic/propositional/kb/data/Clause.java#L25
+
+    public Clause(Set<Literal> literals) {
+        this.literals = literals;
+    }
+
+    public Clause() {}
 
     private Set<Literal> literals = new HashSet<Literal>();
 
@@ -85,6 +91,23 @@ public class Clause {
         if (this.hashCode() != other.hashCode())
             return false;
         return true;
+    }
+
+    @Override
+    public Clause clone() {
+        try {
+            return (Clause) super.clone();
+        } catch (Exception e) {
+            return new Clause(this.getLiterals());
+        }
+        /*
+        try {
+            return new Clause(this.getLiterals());
+        } catch (Exception e) {
+            return new Clause(this.getLiterals());
+        }
+
+         */
     }
 
 }
