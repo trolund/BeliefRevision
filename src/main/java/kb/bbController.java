@@ -6,7 +6,7 @@ import parsing.types.Literal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class kbController {
+public class bbController {
 
     public boolean plResolution(List<Clause> inputClauses, Clause question) {
         Set<Clause> clauses = new HashSet<>(inputClauses);
@@ -94,26 +94,12 @@ public class kbController {
         Set<Clause> negatedClauses = new HashSet<>();
 
         for (Literal l : c.getLiterals()) {
-            //l.setLiteral(!l.isNot);
             Clause negatedClause = new Clause();
             negatedClause.setLiteral(new Literal(!l.isNot, l.literal));
             negatedClauses.add(negatedClause);
         }
-        //return c;
         return negatedClauses;
     }
-
-            /*
-1. Belief base definereres som BB.
-2. Du vil gerne fjerne, f.eks. q fra BB.
-3. Tjek hver clause i BB' sæt af clauses, og se om hver clause entailer q.
-
-4. Hvis det enkelte clause entailer q, fjern denne clause fra sættet.
-
-5. Hvis clausen IKKE entailer q, behold clausen (og evt. læg det i et nyt sæt kaldt 'remainders')
-6. Udregn rangen på hver af remainder clauses og behold de 2-3 højest rangeret?
-7. De højest rangeret clauses er nu det nye sæt for BB.
-    *  */
 
     public void contractionBB(BeliefBase bb, Clause c) {
         HashSet<Clause> remainders = new HashSet();
@@ -151,42 +137,27 @@ public class kbController {
             remainderList.clear();
         }
 
-       //selection
-
-        //
         List<Clause> best = new ArrayList<>();
         int bestScore = 0;
         for(List l : tempHash) {
-            int s = rankBB(l);
+            int s = rank(l);
             if (s > bestScore) {
                 bestScore = s;
                 best = l;
             }
         }
-            //læg højest rangeret liste i beliefbase
-
-
 
         bb.getClauses().clear(); //Clearer belief base
         bb.getClauses().addAll(best); //tilføjer alle lister af clauses til belief base
 
     }
 
-    private int rankBB(List<Clause> list) {
+    private int rank(List<Clause> list) {
         int sum = 0;
         for (Clause x: list) {
             sum = sum + x.getLiterals().size();
         }
         return sum;
-    }
-
-    private int rank(Clause c) {
-        return c.getLiterals().size();
-    }
-
-    public void expansionBB(BeliefBase bb, Clause c) {
-        if(!bb.getClauses().contains(c))
-            bb.getClauses().add(c);
     }
 
 }

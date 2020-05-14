@@ -5,7 +5,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 import kb.BeliefBase;
-import kb.kbController;
+import kb.bbController;
 import parsing.types.*;
 
 public class main {
@@ -19,7 +19,7 @@ public class main {
         Set<Clause> clauses = new HashSet<>();
         Parser p = new Parser();
         BeliefBase bb = new BeliefBase();
-        kbController kbC = new kbController();
+        bbController kbC = new bbController();
 
         System.out.println("You have the following options to choose from:\n1. View the current belief base\n2. Add new belief(s) to the belief base" +
                 "\n3. Remove a belief from the belief base" +
