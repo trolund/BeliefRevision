@@ -154,17 +154,21 @@ public class kbController {
        //selection
 
         //
-        int sum = 0;
+        List<Clause> best = new ArrayList<>();
+        int bestScore = 0;
         for(List l : tempHash) {
-            sum = rankBB(l);
+            int s = rankBB(l);
+            if (s > bestScore) {
+                bestScore = s;
+                best = l;
+            }
+        }
             //læg højest rangeret liste i beliefbase
 
-        }
+
 
         bb.getClauses().clear(); //Clearer belief base
-        for(List l : tempHash) { //Looper og tempHash som indeholder sæt af lister af clauses
-            bb.getClauses().addAll(l); //tilføjer alle lister af clauses til belief base
-        }
+        bb.getClauses().addAll(best); //tilføjer alle lister af clauses til belief base
 
     }
 
