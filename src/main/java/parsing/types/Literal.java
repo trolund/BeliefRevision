@@ -15,7 +15,7 @@ public class Literal implements Cloneable {
 
     public Literal(boolean isNot, String literal) {
         this.isNot = isNot;
-        this.literal = literal;
+        this.literal = new String(literal);
     }
 
     public String getExp() {

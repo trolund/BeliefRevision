@@ -1,6 +1,7 @@
 package parsing.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Node<T> implements Cloneable {
@@ -73,10 +74,14 @@ public class Node<T> implements Cloneable {
     @Override
     public Node clone() {
         try {
-            return (Node) super.clone();
-        } catch (CloneNotSupportedException e) {
-            return new Node<>(this.data, List.copyOf(this.children), this.parent);
+            if(this.data instanceof Literal){
+                Literal lit = ((Literal) this.getData()).clone();
+                return new Node(lit, this.getChildren(), this.parent);
+            }
+        } catch (Exception e) {
+            return new Node(this.getData(), this.getChildren(), this.parent);
         }
+        return new Node(this.getData(), this.getChildren(), this.parent);
     }
 
 }

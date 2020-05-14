@@ -182,7 +182,10 @@ public class Parser {
 
     public Node convertToCNF (Node nonCNFnonde) {
         // replace
-        if(nonCNFnonde.getData() instanceof Connective && nonCNFnonde.getData() == Connective.IMPLICATION){
+        if(nonCNFnonde.getData() instanceof Literal){
+            return nonCNFnonde;
+        }
+        else if (nonCNFnonde.getData() instanceof Connective && nonCNFnonde.getData() == Connective.IMPLICATION){
             return replaceImplication(nonCNFnonde);
         }else if (nonCNFnonde.getData() instanceof Connective && nonCNFnonde.getData() == Connective.BICONDITIONAL){
             Node tempNode = nonCNFnonde.clone();
@@ -206,7 +209,7 @@ public class Parser {
             return convertToCNF(tempNode);
         } else {
             Node tempNode = nonCNFnonde.clone();
-            Node root = new Node(Connective.AND);
+            Node root = new Node(tempNode.getData());
             for (Object n : tempNode.getChildren()) {
                 root.addChild(convertToCNF((Node) n));
             }
