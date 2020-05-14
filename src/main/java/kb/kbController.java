@@ -124,9 +124,6 @@ public class kbController {
             }
         }
 
-        // Belief base: {p, q, p or q, not p or q} c = {q}
-        //{p, p or q, not p or q}
-
         ArrayList<Clause> checkList = (ArrayList<Clause>) remainders.stream().collect(Collectors.toList()); //Liste af remainders {c1, c2, c3, c4....} hvor cn = vilkårlig clause
         remainders.clear();
 
@@ -154,9 +151,15 @@ public class kbController {
             remainderList.clear();
         }
 
-        //Selection function
+       //selection
 
-        //Tilføj 'bedste' remainder list til belief base
+        //
+        int sum = 0;
+        for(List l : tempHash) {
+            sum = rankBB(l);
+            //læg højest rangeret liste i beliefbase
+
+        }
 
         bb.getClauses().clear(); //Clearer belief base
         for(List l : tempHash) { //Looper og tempHash som indeholder sæt af lister af clauses
@@ -165,9 +168,9 @@ public class kbController {
 
     }
 
-    private int rankBB(BeliefBase bb) {
+    private int rankBB(List<Clause> list) {
         int sum = 0;
-        for (Clause x: bb.getClauses()) {
+        for (Clause x: list) {
             sum = sum + x.getLiterals().size();
         }
         return sum;
