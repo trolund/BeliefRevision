@@ -1,8 +1,10 @@
 package parsing.types;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class Literal implements Iexp<String> {
+public class Literal implements Cloneable {
     @Override
     public String toString() {
         return isNot ? "!" + literal : literal;
@@ -43,4 +45,8 @@ public class Literal implements Iexp<String> {
         return this.isNot ? -c : c;
     }
 
+    @Override
+    protected Literal clone() throws CloneNotSupportedException {
+        return (Literal) super.clone();
+    }
 }

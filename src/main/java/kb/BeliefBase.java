@@ -9,7 +9,8 @@ public class BeliefBase {
     private HashSet<Clause> clauses = new HashSet<Clause>();
 
     public void tell(String aSentence) {
-        Node result = parser.parseString(aSentence);
+        Node res = parser.parseString(aSentence);
+        Node result = parser.convertToCNF(res);
         tell(parser.parseNode(result));
     }
 

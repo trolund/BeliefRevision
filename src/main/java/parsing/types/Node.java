@@ -3,9 +3,22 @@ package parsing.types;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node<T> {
+public class Node<T> implements Cloneable {
 
     private T data = null;
+    private List<Node<T>> children = new ArrayList<>();
+    private Node<T> parent = null;
+
+    public Node() {
+    }
+
+    public Node(T data, List<Node<T>> children, Node<T> parent) {
+        this.data = data;
+        this.children = children;
+        this.parent = parent;
+    }
+
+
 
     @Override
     public String toString() {
@@ -16,9 +29,7 @@ public class Node<T> {
     }
 
 
-    private List<Node<T>> children = new ArrayList<>();
 
-    private Node<T> parent = null;
 
     public Node(T data) {
         this.data = data;
@@ -57,6 +68,15 @@ public class Node<T> {
 
     public Node<T> getParent() {
         return parent;
+    }
+
+    @Override
+    public Node clone() {
+        try {
+            return (Node) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return new Node<>(this.data, List.copyOf(this.children), this.parent);
+        }
     }
 
 }
