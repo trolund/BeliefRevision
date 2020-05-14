@@ -64,8 +64,8 @@ public class main {
                     else
                         System.out.println(input + " is not entailed by the belief base");
                     break;
-                //case "0":
-                    //System.exit(0);
+                case "0":
+                    System.exit(0);
                 default:
                     System.out.println("Invalid input. Try again.");
                     break;
