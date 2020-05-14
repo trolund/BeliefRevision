@@ -134,7 +134,6 @@ public class kbController {
 
         List<Clause> remainderList = new ArrayList();
 
-        /*
         while (checkList.size() != 0) {
 
             Clause initialClause = checkList.get(0); //p
@@ -153,72 +152,6 @@ public class kbController {
             List<Clause> tempList = new ArrayList<>(remainderList);
             tempHash.add(tempList); //Liste1 : p + p or q, Liste2: not p or q
             remainderList.clear();
-        }
-         */
-
-        //Prøver at implementere således algoritmen tager stilling til ALLE kombinationer
-        while (checkList.size() != 0) {
-
-            //Clause initialClause = checkList.get(0); //p
-            //remainderList.add(initialClause);
-
-            int size = 1;
-            int maxSize = 1;
-
-            for (int i = 0; i < checkList.size(); i++) {
-                Clause firstClause = checkList.get(i); // {ci}
-                remainderList.add(firstClause);
-
-                for (int j = 0; j < checkList.size(); j++) {
-                    Clause clause = checkList.get(j);
-                    if(!firstClause.equals(clause) && !remainderList.contains(clause)) { //Don't add duplicates
-                        remainderList.add(clause);
-
-                        if (plResolution(remainderList, c)) {
-                            remainderList.remove(clause);
-                            size--;
-                        }
-                        size++;
-                    }
-                }
-
-                if(size > maxSize) {
-                    maxSize = size;
-                    List<Clause> tempList = new ArrayList<>(remainderList);
-                    remainderList.clear();
-                    //tempHash.clear();
-                    tempHash.add(tempList);
-                }
-                size = 0;
-            }
-
-            int listSize = 0;
-            for(List l : tempHash) {
-                if(l.size() > listSize)
-                    listSize = l.size();
-            }
-
-            Iterator iterator = tempHash.iterator();
-
-            List<Clause> largestRemainder = new ArrayList<>();
-
-            while(iterator.hasNext()) {
-                List<Clause> next = (List<Clause>) iterator.next();
-                if(next.size() == listSize)
-                    largestRemainder.addAll(next);
-
-            }
-
-
-            checkList.removeAll(largestRemainder); //p + p or q  ---> not p or q
-            //List<Clause> tempList = new ArrayList<>(remainderList);
-            //tempHash.add(tempList); //Liste1 : p + p or q, Liste2: not p or q
-            //remainderList.clear();
-        }
-
-        System.out.println("Remainder sets:");
-        for(List l : tempHash) {
-            System.out.println(l.toString());
         }
 
         //Selection function
