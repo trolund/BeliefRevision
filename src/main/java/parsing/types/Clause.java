@@ -2,7 +2,6 @@ package parsing.types;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.Set;
 
 public class Clause implements Cloneable {
@@ -46,31 +45,6 @@ public class Clause implements Cloneable {
         return str.toString();
     }
 
-    //Source for overriding equals + hashCode: https://dzone.com/articles/working-with-hashcode-and-equals-in-java
-
-/*
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (!(obj instanceof Clause))
-            return false;
-        if (obj == this)
-            return true;
-
-        if(this.getLiterals().size() == ((Clause) obj).getLiterals().size()) {
-            return this.getLiterals().contains(((Clause) obj).getLiterals());
-        }
-
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(literals.hashCode());
-    }
-
-*/
-
     @Override
     public int hashCode() {
         int hashCode = 1;
@@ -100,14 +74,6 @@ public class Clause implements Cloneable {
         } catch (Exception e) {
             return new Clause(this.getLiterals());
         }
-        /*
-        try {
-            return new Clause(this.getLiterals());
-        } catch (Exception e) {
-            return new Clause(this.getLiterals());
-        }
-
-         */
     }
 
 }

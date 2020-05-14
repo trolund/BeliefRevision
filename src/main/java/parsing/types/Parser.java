@@ -1,7 +1,5 @@
 package parsing.types;
 
-import kb.BeliefBase;
-
 import java.util.*;
 
 public class Parser {
@@ -101,35 +99,8 @@ public class Parser {
 
             return newNode;
         }
-        /*
-        else { //(a or b) and (not b or c) and ... and ...
-
-            Node root = null;
-
-            if(input.indexOf("and") != -1) {
-                String[] substrings = input.split("and");
-
-                root = new Node<Connective>(Connective.AND);
-
-                for (String str : substrings) {
-                    root.addChild(parseString(str));
-                }
-            }else if(input.indexOf("or") != -1) {
-
-            }
-            else if (input.indexOf("->") != -1) { // bicondesion
-
-            }else {
-
-            }
-
-
-            return root;
-        }
-        */
-
     }
-        //(a or b) --> [a, b]
+
     private boolean isOrSentence(Node node) {
         if(node.getData() instanceof Literal) {
             return true;

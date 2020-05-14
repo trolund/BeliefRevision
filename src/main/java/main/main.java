@@ -15,7 +15,7 @@ public class main {
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
         String option = "";
         String input = "";
-        Node node = null;
+        Node node;
         Set<Clause> clauses = new HashSet<>();
         Parser p = new Parser();
         BeliefBase bb = new BeliefBase();
@@ -72,8 +72,6 @@ public class main {
             }
 
             clauses.clear();
-            node = null;
-
 
         } while (!input.equals("0"));
 

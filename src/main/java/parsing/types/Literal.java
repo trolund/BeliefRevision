@@ -1,7 +1,5 @@
 package parsing.types;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class Literal implements Cloneable {
@@ -16,18 +14,6 @@ public class Literal implements Cloneable {
     public Literal(boolean isNot, String literal) {
         this.isNot = isNot;
         this.literal = new String(literal);
-    }
-
-    public String getExp() {
-        return literal;
-    }
-
-    public void setLiteral(Boolean b) {
-        this.isNot = b;
-    }
-
-    public void setExp(String exp) {
-        this.literal = exp;
     }
 
     @Override
